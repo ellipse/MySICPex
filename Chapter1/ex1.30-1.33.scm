@@ -1,17 +1,32 @@
-This is the Scheme process buffer.
-Type C-x C-e to evaluate the expression before point.
-Type C-c C-c to abort evaluation.
-Type C-h m for more information.
+(define (product term a next b)
+  (define (iter a result)
+    (if (> a b)
+        result
+        (iter (next a)
+              (* result (term a)))))
+  (iter a 1))
 
-MIT/GNU Scheme running under GNU/Linux
+(define (factorial n)
+  (define (term x) x)
+  (define (next x) (+ 1 x))
+  (product term 1 next n))
 
-Copyright (C) 2011 Massachusetts Institute of Technology
-This is free software; see the source for copying conditions. There is NO
-warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+(define (wallis-pi n)
+  (define (square x) (* x x))
+  (define (numerator-term x)
+    (square (* 2 x)))
+  (define (denominator-term x)
+    (square (- (* 2 x)
+               1)))
+  (define (next x) (+ x 1))
 
-Image saved on Thursday October 27, 2011 at 7:44:21 PM
-  Release 9.1 || Microcode 15.3 || Runtime 15.7 || SF 4.41 || LIAR/i386 4.118
-  Edwin 3.116
+  (exact->inexact
+   (* 4 (/ (/ (product numerator-term 2 next n)
+              (product denominator-term 2 next n))
+           n))))
+
+(wallis-pi 2000)
+;Value: 3 . 1419853772121162
 
 (define (filtered-accumulate filter combiner null-value term a next b)
   (define (iter a result)
@@ -23,11 +38,8 @@ Image saved on Thursday October 27, 2011 at 7:44:21 PM
                             result))
             (iter (next a) result))))
     (iter a null-value))
-;Value: filtered-accumulate
 
-
-;Value: filtered-accumulate
-
+;using filtered-accumulate to implement sum
 (filtered-accumulate (lambda (x) #t)
                      +
                      0
@@ -36,7 +48,4 @@ Image saved on Thursday October 27, 2011 at 7:44:21 PM
                      (lambda (x) (+ 1 x))
                      100)
 ;Value: 5050
-
-
-;Unspecified return value
 
