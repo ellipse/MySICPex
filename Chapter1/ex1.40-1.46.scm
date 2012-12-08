@@ -101,3 +101,26 @@
                             1.0))
 
 
+;ex1 . 46
+(define (iterative-improve good-enough? improve)
+  (lambda (guess)
+    (define (helper next)
+      (let ((new (improve next)))
+        (if (good-enough? next new)
+            next
+            (helper new))))
+    (helper guess)))
+
+(define (sqrt2 x)
+  ((iterative-improve (lambda (v1 v2)
+                        (< (abs (- v1 v2)) tolerance))
+                      (average-damp (lambda (y) (/ x y))))
+   x))
+(define (fixed-point2 f first-guess)
+  ((iterative-improve (lambda (v1 v2)
+                        (< (abs (- v1 v2)) tolerance))
+                      (average-damp f))
+   first-guess))
+
+
+
