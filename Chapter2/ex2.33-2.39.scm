@@ -86,3 +86,11 @@
   (iter initial sequence))
 
 ;; ex2.39
+(define (reverse-using-fl sequence)
+  (fold-left (lambda (x y) )
+             '()
+             sequence))
+(define (reverse-using-fr sequence)
+  (fold-right (lambda (x y) )
+              '()
+              sequence))
