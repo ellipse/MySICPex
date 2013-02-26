@@ -85,5 +85,4 @@
               (cdr rest))))
   (iter initial sequence))
 
-
 ;; ex2.39
