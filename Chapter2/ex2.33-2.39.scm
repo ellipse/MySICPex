@@ -10,6 +10,11 @@
       (op (car sequence)
           (accumulate op initial (cdr sequence)))))
 
+(define (enumerate-tree tree)
+  (cond ((null? tree) '())
+        ((not (pair? tree)) (list tree))
+        (else (append (enumerate-tree (car tree))
+                      (enumerate-tree (cdr tree))))))
 ;; ex2.33
 (define (map-using-ac p sequence)
   (accumulate
@@ -34,15 +39,51 @@
 
 ;; ex2.35
 (define (count-leaves-using-ac t)
-  (accumulate ))
+  (accumulate + 0 (map (lambda (x) 1) (enumerate-tree t))))
+(define (count-leaves-using-ac-2 t)
+  (accumulate
+   (lambda (x rest)
+     (if (pair? x)
+         (+ (count-leaves-using-ac-2 x) rest)
+         (+ rest 1)))
+   0
+   t))
 
 ;; ex2.36
-(define accumulate-n op init seqs
+(define (accumulate-n op init seqs)
   (if (null? (car seqs))
       '()
-      (cons (accumulate op init )
-            (accumulate-n op init ))))
+      (cons (accumulate op init (map car seqs))
+            (accumulate-n op init (map cdr seqs)))))
 
 ;; ex2.37
 (define (dot-product v w)
   (accumulate + 0 (map * v w)))
+
+(define (matrix-*-vector m v)
+  (map
+   (lambda (line) (dot-product line v))
+       m))
+
+(define (transpose mat)
+  (accumulate-n
+   cons
+   '()
+   mat))
+
+(define (matrix-*-matrix m n)
+  (let ((cols (transpose n)))
+    (map (lambda (line) (matrix-*-vector cols line))
+         m)))
+
+;; ex2.38
+(define (fold-left op initial sequence)
+  (define (iter result rest)
+    (if (null? rest)
+        result
+        (iter (op result (car rest))
+              (cdr rest))))
+  (iter initial sequence))
+
+
+;; ex2.39
