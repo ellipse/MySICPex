@@ -86,11 +86,13 @@
   (iter initial sequence))
 
 ;; ex2.39
-(define (reverse-using-fl sequence)
-  (fold-left (lambda (x y) )
+(define (fold-right func init seq)
+  (accumulate func init seq))
+(define (reverse-using-fr sequence)
+  (fold-right (lambda (x y) (append y (list x)))
              '()
              sequence))
-(define (reverse-using-fr sequence)
-  (fold-right (lambda (x y) )
+(define (reverse-using-fl sequence)
+  (fold-left (lambda (x y) (cons y x))
               '()
               sequence))
