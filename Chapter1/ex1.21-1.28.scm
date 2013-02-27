@@ -36,28 +36,51 @@
         ((fermat-test n) (fast-prime? n (- times 1)))
         (else false)))
 
-(fast-prime? 199 20)
 
-
-
-
-;ex1 . 21
+;ex1.21
 (smallest-divisor 1999)
 
-;ex1 . 22
+;ex1.22
 (define (timed-prime-test n)
-  (start-prime-test n (runtime)))
+  (start-prime-test n (real-time-clock)))
 
 (define (start-prime-test n start-time)
   (if (prime? n)
-      (report-prime (- (runtime start-time)))))
+      (report-prime (- (real-time-clock) start-time) n)))
 
-(define (report-prime elapsed-time)
-  (newline)
+(define (report-prime elapsed-time n)
   (display n)
   (display " *** ")
-  (display elapsed-time))
+  (display elapsed-time)
+  (newline))
 
 (define (search-for-primes a b)
+  (define start (if (even? a) (+ a 1) a))
+  (define end (if (even? b) (- b 1) b))
+  (define (sfp-iter n)
+    (if (<= n end)
+        (begin (timed-prime-test n)
+               (sfp-iter (+ n 2)))))
+  (sfp-iter start))
 
 
+;; ex 1.24
+(define (find-divisor n test-divisor)
+  (define (next n) (if (= n 2) 3 (+ n 2)))
+  (cond ((> (square test-divisor) n) n)
+        ((divides? test-divisor n) test-divisor)
+        (else (find-divisor n (next test-divisor)))))
+
+;; ex 1.28
+(define (mr-test n)
+ (define (try-iter n a)
+   (= (expmod a (- n 1) n)
+      1))
+ (try-iter n (+ 1 (random (- n 1)))))
+(define (mr-prime? n)
+  (define (mrt-iter n trytime)
+    (cond ((= trytime 0) true)
+          ((mr-test n) (mrt-iter n (- trytime 1)))
+          (else false)))
+  (mrt-iter n (if (< n 100) n 100)))
+;; 出错几率为0.5^100
