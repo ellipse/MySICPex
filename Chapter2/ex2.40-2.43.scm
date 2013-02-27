@@ -1,5 +1,5 @@
-(load "~/Programs/MySICPex/Chapter2/ex2.33-2.39.scm")
-(load "~/Programs/MySICPex/Chapter1/ex1.21-1.28.scm")
+(load "~/Programs/SICP/Chapter2/ex2.33-2.39.scm")
+(load "~/Programs/SICP/Chapter1/ex1.21-1.28.scm")
 
 (define (flatmap proc seq)
   (accumulate append '() (map proc seq)))
@@ -21,15 +21,18 @@
 
 
 ;; ex 2.41
-(define (unique-trilists n)
-  ;; generate all possible trible lists (i j k)
-  ;; satisfying 1<=i<j<k<min{s,n+1}
-  (flatmap
-   ())
+
 (define (sum-to-s-trilist n s)
   (define (sum-to-s? trible-pair)
     (= (+ (car trible-pair)
           (cadr trible-pair)
           (caddr trible-pair))
        s))
-  )
+  (define upper-bound (if (< s n) s n))
+  (filter
+   sum-to-s?
+   (flatmap
+    (lambda (i)
+      (map (lambda (p) (cons i p))
+           (unique-pairs (- i 1))))
+    (enumerate-interval 3 n))))
