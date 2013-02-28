@@ -21,7 +21,6 @@
       '()
       (cons low (enumerate-interval (+ low 1) high))))
 
-
 ;; ex2.33
 (define (map-using-ac p sequence)
   (accumulate

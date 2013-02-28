@@ -21,15 +21,89 @@
 
 
 ;; ex 2.41
-(define (unique-trilists n)
-  ;; generate all possible trible lists (i j k)
-  ;; satisfying 1<=i<j<k<min{s,n+1}
-  (flatmap
-   ())
+
 (define (sum-to-s-trilist n s)
   (define (sum-to-s? trible-pair)
     (= (+ (car trible-pair)
           (cadr trible-pair)
           (caddr trible-pair))
        s))
-  )
+  (define upper-bound (if (< s n) s n))
+  (filter
+   sum-to-s?
+   (flatmap
+    (lambda (i)
+      (map (lambda (p) (cons i p))
+           (unique-pairs (- i 1))))
+    (enumerate-interval 3 n))))
+
+
+;; ex 2.42
+(define (safe? k position)
+  (define kth (car position))
+  (define (safe-iter i pos)
+    (if (and (not (null? pos))
+             (not (= kth (car pos)))  ;; not in the same line
+             (not (= (abs (- (car pos) kth))
+                     (- i 1))))       ;; not in same diagonal
+        (safe-iter (+ i 1) (cdr pos))
+        (if (null? pos)
+            true                      ;; pos is null means test completed
+            false)))
+  (safe-iter 2 (cdr position)))
+
+(define empty-board '())
+
+(define (adjoint-position kth k rest)
+  (cons kth rest))
+
+(define (queens board-size)
+  (define (queen-cols k)
+    (if (= k 0)
+        (list empty-board)
+        (filter
+         (lambda (position) (safe? k position))
+         (flatmap
+          (lambda (rest-of-queens)
+            (map (lambda (new-row)
+                   (adjoint-position new-row k rest-of-queens))
+                 (enumerate-interval 1 board-size)))
+          (queen-cols (- k 1))))))
+  (queen-cols board-size))
+
+
+;; my version of queens ( filtering before appending )
+;; reduce space complexity to O(n)
+(define (queens-myversion board-size)
+  (define (queen-cols k)
+    (if (= k 0)
+        (list empty-board)
+        (flatmap
+         (lambda (rest-of-queens)
+           (filter
+            (lambda (position) (safe? k position))
+            (map (lambda (new-row)
+                   (adjoint-position new-row k rest-of-queens))
+                 (enumerate-interval 1 board-size))))
+         (queen-cols (- k 1)))))
+  (queen-cols board-size))
+
+;; ex 2.43
+(define (queens-time queens-func k)
+  (define start-time (real-time-clock))
+  (queens-func k)
+  (- (real-time-clock) start-time))
+
+(define (queens-slow board-size)
+  (define (queen-cols k)
+    (if (= k 0)
+        (list empty-board)
+        (filter
+         (lambda (position) (safe? k position))
+         (flatmap
+          (lambda (new-row)
+            (map (lambda (rest-of-queens)
+                   (adjoint-position new-row k rest-of-queens))
+                 (queen-cols (- k 1))))
+          (enumerate-interval 1 board-size)))))
+  (queen-cols board-size))
