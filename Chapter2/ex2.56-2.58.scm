@@ -42,12 +42,14 @@
         ;; deal with exponentiation, ex 2.56
         ((and (exponentiation? exp)
               (not (same-variable? (exponent exp) var)))
-         (make-product
-          (make-product (exponent exp)
-                        (make-exponentiation
-                         (base exp)
-                         (make-sum (exponent exp) -1)))
-          (deriv (base exp) var)))
+         (let ((n (exponent exp))
+               (u (base exp)))
+           (make-product
+            (make-product n
+                          (make-exponentiation
+                           u
+                           (make-sum n -1)))
+            (deriv u var))))
         
         (else
          (error "unknown expression type -- DERIV" exp))))
@@ -94,3 +96,31 @@
   (if (null? (cdddr p))
       (caddr p)
       (cons '* (cddr p))))
+
+
+;; ex2.58  ========================================
+;; deal with expressions in infix type
+
+;; ex2.58 (a)
+(define (make-sum a1 a2)
+  (cond ((=number? a1 0) a2)
+        ((=number? a2 0) a1)
+        ((and (number? a1) (number? a2)) (+ a1 a2))
+        (else (list a1 '+ a2))))
+(define (sum? x)
+  (and (pair? x) (eq? (cadr x) '+)))
+(define (addend s) (car s))
+(define (augend s) (caddr s))
+
+(define (make-product m1 m2)
+  (cond ((or (=number? m1 0) (=number? m2 0)) 0)
+        ((=number? m1 1) m2)
+        ((=number? m2 1) m1)
+        ((and (number? m1) (number? m2)) (* m1 m2))
+        (else (list m1 '* m2))))
+(define (product? x)
+  (and (pair? x) (eq? (cadr x) '*)))
+(define (multiplier p) (car p))
+(define (multiplicand p) (caddr p))
+
+;; ex2.58 (b)
