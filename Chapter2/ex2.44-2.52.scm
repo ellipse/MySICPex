@@ -105,6 +105,7 @@
   (lambda (frame)
     (for-each
      (lambda (segment)
+       ;; attention! the procedure 'draw-line' hasn't been defined
        (draw-line
         ((frame-coord-map frame) (start-segment segment))
         ((frame-coord-map frame) (end-segment segment))))
