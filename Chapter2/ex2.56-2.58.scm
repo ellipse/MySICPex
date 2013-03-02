@@ -75,6 +75,7 @@
                        (append (list '+) (cdr a1) (cdr a2))
                        (append (list '+ a1) (cdr a2))))
         (else (list '+ a1 a2))))
+(define (addend s) (cadr s))
 (define (augend s)
   (if (null? (cdddr s))
       (caddr s)
