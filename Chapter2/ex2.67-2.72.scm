@@ -101,5 +101,76 @@
 
 ;; ex2.69
 (define (successive-merge leaf-set)
-  ())
+  (if (null? (cdr leaf-set))
+      (car leaf-set)
+      (successive-merge
+       (adjoin-set (make-code-tree (car leaf-set)
+                                   (cadr leaf-set))
+                   (cddr leaf-set)))))
 ;; ex2.69 ends here
+
+
+;; ex2.70
+(define rock-words
+  '((A 2) (BOOM 1) (NA 16)
+    (SHA 3) (GET 2) (YIP 9)
+    (JOB 2) (WAH 1)))
+(define rocktree (generate-huffman-tree rock-words))
+
+;; the generated huffman tree:
+;; ((leaf na 16)
+;;   ((leaf yip 9)
+;;    (((leaf a 2)
+;;      ((leaf wah 1)
+;;       (leaf boom 1)
+;;       (wah boom) 2)
+;;      (a wah boom)
+;;      4)
+;;     ((leaf sha 3)
+;;      ((leaf job 2)
+;;       (leaf get 2)
+;;       (job get)
+;;       4)
+;;      (sha job get)
+;;      7)
+;;     (a wah boom sha job get) 11)
+;;    (yip a wah boom sha job get) 20)
+;;   (na yip a wah boom sha job get) 36)
+
+(encode '(Get a job
+              Sha na na na na na na na na
+              Get a job
+              Sha na na na na na na na na
+              Wah yip yip yip yip yip yip yip yip yip
+              Sha boom)
+        rocktree)
+;; the huffman code of previous song
+;; (1 1 1 1 1 1 1 0 0 1 1 1 1 0
+;;    1 1 1 0 0 0 0 0 0 0 0 0 1 1
+;;    1 1 1 1 1 0 0 1 1 1 1 0 1 1
+;;    1 0 0 0 0 0 0 0 0 0 1 1 0 1
+;;    0 1 0 1 0 1 0 1 0 1 0 1 0 1
+;;    0 1 0 1 0 1 1 1 0 1 1 0 1 1)
+;; length = 84
+
+
+;; ex2.70 ends here
+
+
+;; ex2.71
+
+(generate-huffman-tree '((a 1) (b 2) (c 4) (d 8) (e 16)))
+;; the symbol occuring most frequently occupies 1 bit
+;; and that with lowest frequecy occupies n-1 bits
+;;   31
+;;   / \
+;;  e   15
+;;     / \
+;;    d   7
+;;       / \
+;;      c   3
+;;         / \
+;;        b   a
+
+;; ex2.71 ends here
+
