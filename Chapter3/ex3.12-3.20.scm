@@ -21,27 +21,41 @@
 ;; ex3.17
 (define (count-pairs x)
   (let ((appeared '()))
-    (if (or (not (pair? x))
-            (memq x appeared))
-        0
-        (begin (cons x appeared)
-               (+ (count-pairs (car x))
-                  (count-pairs (cdr x))
-                  1)))))
+    (define (count-helper p)
+      (if (or (not (pair? p))
+              (memq p appeared))
+          0
+          (begin
+            (set! appeared (cons p appeared))
+            (+ (count-helper (car p))
+               (count-helper (cdr p))
+               1))))
+    (count-helper x)))
 ;; ex3.17 ends here
 
 
 ;; ex3.19 && ex3.18
 (define cyclic?
   (lambda (lst)
-    (do ((ptr1 lst)
-         (ptr2 (cdr lst)))
-        ((or (null? ptr2)
-             (null? (cdr ptr2))
-             (eq? ptr1 ptr2))
-         (if (or (null? ptr2) (null? ptr1))
-             false
-             true))
-      (begin (set! ptr2 (cddr ptr2))
-             (set! ptr1 (cdr ptr1))))))
+    (define (cyclic?-iter ptr1 ptr2)
+      (cond ((or (null? ptr2)
+                 ;; If ptr2 reaches the end of lst
+
+                 (not (pair? ptr2)) 
+                 ;; If ptr2 reaches a symbol rather than a pair
+
+                 (null? (cdr ptr2))
+                 ;; If ptr2 reaches the last pair of lst
+
+                 (not (pair? (cdr ptr2)))
+                 ;; If ptr2 reaches the last cons cell of lst
+                 )
+             false)
+            ((eq? ptr1 ptr2)
+             ;; If ptr2 catches up ptr1
+             true)
+            (else (cyclic?-iter (cdr ptr1) (cddr ptr2)))))
+    (if (pair? lst)
+        (cyclic?-iter lst (cdr lst))
+        false)))
 ;; ex3.19 && ex3.18 ends here
